@@ -3,6 +3,7 @@ const path = require('path')
 const babylon = require('@babel/parser')
 const traverse = require('@babel/traverse').default
 
+const getConfig = require('./utils/getConfig')
 const { getCommentBlock, compileCommentBlock } = require('./commentBlock')
 
 function getDep(ast) {

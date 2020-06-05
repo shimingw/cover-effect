@@ -9,7 +9,7 @@ console.log(getConfig());
 
 // const coverConfig = getConfig()
 
-// depAnalyse(root, coverConfig.entry)
+depAnalyse(root, coverConfig.entry)
 
 
 
