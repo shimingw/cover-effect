@@ -1,0 +1,18 @@
+{
+  "name": "cover",
+  "version": "1.0.0",
+  "description": "代码影响范围评估工具",
+  "main": "index.js",
+  "scripts": {
+    "dev":"nodemon ./src/index.js"
+  },
+  "author": "shimingwen",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.10.2",
+    "@babel/traverse": "^7.10.1"
+  }
+}
