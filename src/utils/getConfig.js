@@ -1,6 +1,8 @@
 const path = require('path')
 const fs = require('fs')
 
+
+
 function loadConfig(fileName) {
   // const filePath = path.join(process.cwd(), fileName)
   const root = path.join(__dirname,'../../example/app')

@@ -2,16 +2,13 @@ const fs = require('fs')
 const path = require('path')
 const babylon = require('@babel/parser')
 const traverse = require('@babel/traverse').default
+const depState = require('./depState')
 
-const getConfig = require('./utils/getConfig')
-const { getCommentBlock, compileCommentBlock } = require('./commentBlock')
+const getConfig = require('./getConfig')
+const { getFileDesc } = require('./commentBlock')
 
-function getDep(ast) {
-  traverse(ast, {
-    ImportDeclaration({ node }) {
-      console.log(node.source.value)
-    },
-  })
+function getCodeStr(filePath) {
+  return fs.readFileSync(filePath, 'utf-8')
 }
 
 function parse(codeStr) {
@@ -20,17 +17,32 @@ function parse(codeStr) {
   })
 }
 
-function getFileDesc(ast) {
-  const fileDescStr = getCommentBlock(ast.comments)
-  return compileCommentBlock(fileDescStr)
+function getCodeAst(filePath) {
+  return parse(getCodeStr(filePath))
 }
 
-function run(root, entryFilePath) {
-  const entry = path.join(root, entryFilePath)
-  const codeStr = fs.readFileSync(entry, 'utf-8')
-  const ast = parse(codeStr)
-  // const fileDesc = getFileDesc(ast)
-  getDep(ast)
+function getDep(ast, curFilePath) {
+  const curPath = path.dirname(curFilePath)
+  traverse(ast, {
+    ImportDeclaration({ node }) {
+      const relativePath = node.source.value
+      const filePath = path.join(curPath, relativePath)
+      const codeAst = getCodeAst(filePath)
+      const fileDesc = getFileDesc(codeAst)
+      depState.addDep(filePath, fileDesc, curFilePath)
+      getDep(codeAst, filePath)
+    },
+  })
+}
+
+function run() {
+  const { base, entry } = getConfig()
+  const entryFilePath = path.join(base, entry)
+  const ast = getCodeAst(entryFilePath)
+  const fileDesc = getFileDesc(ast)
+  depState.addDep(entryFilePath, fileDesc)
+  getDep(ast, entryFilePath)
+  console.log(depState.getState())
 }
 
 module.exports = run

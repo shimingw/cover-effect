@@ -10,19 +10,34 @@ function getCommentBlock(comments) {
 
 function compileCommentBlock(commentBlock) {
   // 是否采用key，value的形式
-  const paramsList = commentBlock.replace(/\*|\s/g, '').match(/@([^@]+)/g)
-  const params = paramsList.map((params) => {
-    const index = params.indexOf(':')
-    const key = params.substring(1, index)
-    const val = params.substring(index+1)
+  const descStrList = commentBlock.replace(/\*|\s/g, '').match(/@([^@]+)/g)
+  const descObjList = descStrList.map((descStr) => {
+    const index = descStr.indexOf(':')
+    const key = descStr.substring(1, index)
+    const val = descStr.substring(index+1)
     return {
       [key]: val,
     }
   })
-  return params
+  return arr2obj(descObjList)
 }
+
+function arr2obj(arr) {
+  const tmpObj ={}
+  for (const iterator of arr) {
+    Object.assign(tmpObj,iterator)
+  }
+  return tmpObj
+}
+
+function getFileDesc(ast) {
+  const fileDescStr = getCommentBlock(ast.comments)
+  return compileCommentBlock(fileDescStr)
+}
+
 
 module.exports = {
   getCommentBlock,
   compileCommentBlock,
+  getFileDesc
 }
