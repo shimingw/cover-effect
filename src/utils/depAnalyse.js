@@ -33,8 +33,8 @@ function getDep(ast, curFilePath) {
         depState.addDep(filePath, fileDesc, curFilePath)
         getDep(codeAst, filePath)
       } catch (error) {
-        console.log(filePath);
-        throw(error)
+        console.log(filePath)
+        throw error
       }
     },
   })
@@ -56,4 +56,18 @@ function getFileDep() {
   })
 }
 
-module.exports = getFileDep
+function getBranchDiffDep(fileDepData, branchDiffData) {
+  const branchDiffFiles = branchDiffData.files
+  const BranchDiffDep = []
+  for (const branchDiffFile of branchDiffFiles) {
+    const branchDiffFilePath = path.relative(config.base, branchDiffFile.file)
+    BranchDiffDep.push({
+      ...branchDiffFile,
+      ...fileDepData[branchDiffFilePath],
+      file:branchDiffFilePath
+    })
+  }
+  return BranchDiffDep
+}
+
+module.exports = { getFileDep, getBranchDiffDep }

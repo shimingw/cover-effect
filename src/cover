@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+const fs = require('fs')
+const path = require('path')
+const ejs = require('ejs')
+
+const config = require('./utils/getConfig')()
+const { getFileDep, getBranchDiffDep } = require('./utils/depAnalyse')
+const simpleGit = require('simple-git')
+const git = simpleGit(process.cwd())
+
+function writeDepState(depState) {
+  const { base } = config
+  fs.writeFileSync(path.join(base, 'depState.json'), JSON.stringify(depState))
+}
+
+function start() {
+  Promise.all([
+    getFileDep(),
+    git.diffSummary([config.oldBranch, config.newBranch]),
+  ])
+    .then((data) => {
+      const [fileDepData, branchDiffData] = data
+      const branchDiffDep = getBranchDiffDep(fileDepData, branchDiffData)
+
+      // 将文件些人到html模板
+      const people = ['geddy', 'neil', 'alex']
+      const template = fs.readFileSync(path.join(__dirname, './utils/template.html'),'utf-8')
+      const html = ejs.render(template, { branchDiffDep })
+
+      fs.writeFileSync(path.join(config.base, 'depAnalyse.html'), html)
+    })
+    .catch((e) => {
+      console.log(e)
+    })
+}
+
+start()

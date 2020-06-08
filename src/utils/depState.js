@@ -1,9 +1,12 @@
+const path = require('path')
+const config = require('./getConfig')()
+
 class depState {
   constructor() {
     this.state = {
       // fileName: {
-      //     desc: {},
-      //     dep: [],
+      //     fileDesc: {},
+      //     beDeped: [],
       //   },
     }
   }
@@ -17,6 +20,12 @@ class depState {
    * @param {*} beDepedFilePath 依赖改文件的路径
    */
   addDep(filePath, fileDesc, beDepedFilePath) {
+    // 将filePath、beDepedFilePath转换成相对于base的路径
+    const { base } = config
+    filePath = path.relative(base, filePath)
+    beDepedFilePath = beDepedFilePath
+      ? path.relative(base, beDepedFilePath)
+      : undefined
     if (!this.hasFileState(filePath)) {
       this.initFileDep(filePath, fileDesc)
     }
@@ -31,13 +40,16 @@ class depState {
    */
   initFileDep(filePath, fileDesc) {
     this.state[filePath] = {
-      desc: fileDesc,
+      fileDesc: {
+        file: filePath,
+        ...fileDesc,
+      },
       beDeped: [],
     }
   }
   addFileBeDeped(filePath, beDepedFilePath) {
     if (this.hasFileState(filePath)) {
-      this.state[filePath].beDeped.push(beDepedFilePath)
+      this.state[filePath].beDeped.push(this.state[beDepedFilePath])
     }
   }
   /**

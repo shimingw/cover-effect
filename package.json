@@ -8,12 +8,16 @@
   },
   "author": "shimingwen",
   "license": "ISC",
+  "bin": {
+    "cover": "./src/cover"
+  },
   "devDependencies": {
     "nodemon": "^2.0.4"
   },
   "dependencies": {
     "@babel/parser": "^7.10.2",
     "@babel/traverse": "^7.10.1",
+    "ejs": "^3.1.3",
     "simple-git": "^2.6.0"
   }
 }
