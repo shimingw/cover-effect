@@ -4,7 +4,7 @@
   "description": "代码影响范围评估工具",
   "main": "index.js",
   "scripts": {
-    "dev":"nodemon ./src/index.js"
+    "dev": "nodemon ./src/index.js"
   },
   "author": "shimingwen",
   "license": "ISC",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@babel/parser": "^7.10.2",
-    "@babel/traverse": "^7.10.1"
+    "@babel/traverse": "^7.10.1",
+    "shelljs": "^0.8.4"
   }
 }

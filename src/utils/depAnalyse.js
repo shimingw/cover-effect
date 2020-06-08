@@ -25,24 +25,35 @@ function getDep(ast, curFilePath) {
   const curPath = path.dirname(curFilePath)
   traverse(ast, {
     ImportDeclaration({ node }) {
-      const relativePath = node.source.value
-      const filePath = path.join(curPath, relativePath)
-      const codeAst = getCodeAst(filePath)
-      const fileDesc = getFileDesc(codeAst)
-      depState.addDep(filePath, fileDesc, curFilePath)
-      getDep(codeAst, filePath)
+      try {
+        const relativePath = node.source.value
+        const filePath = path.join(curPath, relativePath)
+        const codeAst = getCodeAst(filePath)
+        const fileDesc = getFileDesc(codeAst)
+        depState.addDep(filePath, fileDesc, curFilePath)
+        getDep(codeAst, filePath)
+      } catch (error) {
+        console.log(filePath);
+        throw(error)
+      }
     },
   })
 }
 
-function run() {
-  const { base, entry } = getConfig()
-  const entryFilePath = path.join(base, entry)
-  const ast = getCodeAst(entryFilePath)
-  const fileDesc = getFileDesc(ast)
-  depState.addDep(entryFilePath, fileDesc)
-  getDep(ast, entryFilePath)
-  console.log(depState.getState())
+function getFileDep() {
+  return new Promise((resolve, reject) => {
+    try {
+      const { base, entry } = getConfig()
+      const entryFilePath = path.join(base, entry)
+      const ast = getCodeAst(entryFilePath)
+      const fileDesc = getFileDesc(ast)
+      depState.addDep(entryFilePath, fileDesc)
+      getDep(ast, entryFilePath)
+      resolve(depState.getState())
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
-module.exports = run
+module.exports = getFileDep
