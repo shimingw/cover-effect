@@ -14,6 +14,6 @@
   "dependencies": {
     "@babel/parser": "^7.10.2",
     "@babel/traverse": "^7.10.1",
-    "shelljs": "^0.8.4"
+    "simple-git": "^2.6.0"
   }
 }

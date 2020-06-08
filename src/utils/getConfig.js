@@ -1,19 +1,15 @@
 const path = require('path')
 const fs = require('fs')
 
-
-
 function loadConfig(fileName) {
-  // const filePath = path.join(process.cwd(), fileName)
-  const root = path.join(__dirname,'../../example/app')
-  const filePath = path.join(root, fileName)
-  const config = require(filePath)
-  config.base = root
+  const coverPath = path.join(process.cwd(),'./example/app/.cover.js')
+  const config = require(coverPath)
+  config.base = path.dirname(coverPath)
   return config
 }
 
-const getConfig = (function (fileName = './.cover.js') {
-  const config = loadConfig(fileName)
+const getConfig = (function () {
+  const config = loadConfig()
   return function () {
     return config
   }

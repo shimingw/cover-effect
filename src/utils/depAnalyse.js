@@ -4,7 +4,7 @@ const babylon = require('@babel/parser')
 const traverse = require('@babel/traverse').default
 const depState = require('./depState')
 
-const getConfig = require('./getConfig')
+const config = require('./getConfig')()
 const { getFileDesc } = require('./commentBlock')
 
 function getCodeStr(filePath) {
@@ -43,7 +43,7 @@ function getDep(ast, curFilePath) {
 function getFileDep() {
   return new Promise((resolve, reject) => {
     try {
-      const { base, entry } = getConfig()
+      const { base, entry } = config
       const entryFilePath = path.join(base, entry)
       const ast = getCodeAst(entryFilePath)
       const fileDesc = getFileDesc(ast)
