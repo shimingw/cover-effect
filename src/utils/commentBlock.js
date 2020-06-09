@@ -5,16 +5,18 @@ function getCommentBlock(comments) {
     // TODO: 这里应该是个变量，默认值为@Description
     return value.includes('@Description')
   })
-  return commentBlock ? commentBlock.value : undefined
+  return commentBlock ? commentBlock.value : ''
 }
 
 function compileCommentBlock(commentBlock) {
+  // 如果没有文件描述则返回一个空对象
+  if (!commentBlock) return {}
   // 是否采用key，value的形式
   const descStrList = commentBlock.replace(/\*|\s/g, '').match(/@([^@]+)/g)
   const descObjList = descStrList.map((descStr) => {
     const index = descStr.indexOf(':')
     const key = descStr.substring(1, index)
-    const val = descStr.substring(index+1)
+    const val = descStr.substring(index + 1)
     return {
       [key]: val,
     }
@@ -23,9 +25,9 @@ function compileCommentBlock(commentBlock) {
 }
 
 function arr2obj(arr) {
-  const tmpObj ={}
+  const tmpObj = {}
   for (const iterator of arr) {
-    Object.assign(tmpObj,iterator)
+    Object.assign(tmpObj, iterator)
   }
   return tmpObj
 }
@@ -35,9 +37,8 @@ function getFileDesc(ast) {
   return compileCommentBlock(fileDescStr)
 }
 
-
 module.exports = {
   getCommentBlock,
   compileCommentBlock,
-  getFileDesc
+  getFileDesc,
 }
