@@ -16,7 +16,7 @@ function importPathTransform(curPath, relativePath) {
   // TODO:这里要进行文件后缀名匹配
   // 解析命名别名
   relativePath = replaceAlias(relativePath)
-  
+
   // 将相对路径转化成绝对路径
   const absolutePath = getAbsolutePath(curPath, relativePath)
 
@@ -59,15 +59,22 @@ function getVaildPath(filePath, ext) {
 
 async function matchSuffix(filePath) {
   const { exts } = config
-  
+
   for (const ext of exts) {
-    const guessPath = `${filePath}.${ext}`
+    const guessPath = `${filePath}${ext}`
     const rst = await getVaildPath(guessPath)
     if (rst) return rst
   }
 }
 
+function isJsFilePath(filePath) {
+  const ext = path.extname(filePath)
+  const exts = ['.js', '.vue', '.jsx']
+  return exts.includes(ext)
+}
+
 module.exports = {
   importPathTransform,
   getAbsolutePath,
+  isJsFilePath
 }

@@ -25,7 +25,7 @@ function start() {
       // 将文件些人到html模板
       const template = fs.readFileSync(path.join(__dirname, './utils/template.html'),'utf-8')
       
-      fs.writeFileSync(path.join(config.base, 'test.json'), JSON.stringify(branchDiffDep))
+      // fs.writeFileSync(path.join(config.base, 'test.json'), JSON.stringify(branchDiffDep))
 
       const html = ejs.render(template, { branchDiffDep })
       
