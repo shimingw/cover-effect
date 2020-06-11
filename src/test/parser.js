@@ -1,30 +1,58 @@
 const babylon = require('@babel/parser')
 const compiler = require('vue-template-compiler')
 // https://segmentfault.com/a/1190000018753707#item-3-6
-const code = `
+const vueCode = `
 <template>
- <div>
-
- </div>
+  <div></div>
 </template>
 
 <script>
-export default {
- data() {
- return {
+import '@b/b'
 
- }
- },
+export default {
+  data() {
+    return {}
+  },
+  async mounted() {
+    await this.qwe()
+  },
+  methods: {
+    qwe() {},
+  },
 }
 </script>
 
-<style lang="postcss" scoped>
-</style>
+<style lang="postcss" scoped></style>
 `
 
+const jsxCode = `
+import React, { Component } from 'react';
 
-const ast = babylon.parse(compiler.parseComponent(code).script.content, {
-    sourceType: 'module',
-  })
+(async function (params) {
+    
+})()
+
+class parser extends Component {
+  render() {
+    return (
+      <div>
+        
+      </div>
+    );
+  }
+}
+
+export default parser;`
+
+const jsxAst = babylon.parse(jsxCode, {
+  sourceType: 'module',
+  plugins:['jsx']
+})
 
 
+const vueAst = babylon.parse(compiler.parseComponent(vueCode).script.content, {
+  sourceType: 'module',
+  plugins:['jsx']
+})
+// console.log(jsxAst);
+console.log(vueAst);

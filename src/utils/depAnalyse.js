@@ -10,6 +10,7 @@ const matchLoad = require('./load')
 function parse(codeStr) {
   return babylon.parse(codeStr, {
     sourceType: 'module',
+    plugins:['jsx']
   })
 }
 
@@ -26,7 +27,14 @@ function getDep(ast, curFilePath) {
       try {
         // TODO: 使用async await 
         // 需要跳过公共模块的依赖
-        importPathTransform(curPath, node.source.value).then(filePath=>{
+        // TODO: react/www,对这种依赖的处理
+        const depFilePath = node.source.value
+        if(config.dependencies.includes(depFilePath)){
+          // 公共依赖库不需要进行解析
+          return
+        }
+
+        importPathTransform(curPath, depFilePath).then(filePath=>{
           let fileDesc = {}
           if(isJsFilePath(filePath)){
             // 如果是js、vue、jsx，继续进行依赖分析
