@@ -2,7 +2,11 @@ const path = require('path')
 const babylon = require('@babel/parser')
 const traverse = require('@babel/traverse').default
 const depState = require('./depState')
-const { importPathTransform, getAbsolutePath,isJsFilePath } = require('./pathAnalyse')
+const {
+  importPathTransform,
+  getAbsolutePath,
+  isJsFilePath,
+} = require('./pathAnalyse')
 const config = require('./getConfig')()
 const { getFileDesc } = require('./commentBlock')
 const matchLoad = require('./load')
@@ -10,7 +14,7 @@ const matchLoad = require('./load')
 function parse(codeStr) {
   return babylon.parse(codeStr, {
     sourceType: 'module',
-    plugins:['jsx']
+    plugins: ['jsx'],
   })
 }
 
@@ -25,29 +29,42 @@ function getDep(ast, curFilePath) {
   traverse(ast, {
     ImportDeclaration({ node }) {
       try {
-        // TODO: 使用async await 
+        // TODO: 使用async await
         // 需要跳过公共模块的依赖
         // TODO: react/www,对这种依赖的处理
         const depFilePath = node.source.value
-        if(config.dependencies.includes(depFilePath)){
+        const indexSlash = depFilePath.indexOf('/')
+        const subDepFilePath =
+          indexSlash === -1 ? depFilePath : depFilePath.substring(0, indexSlash)
+        if (config.dependencies.includes(subDepFilePath)) {
           // 公共依赖库不需要进行解析
+          console.log(`公共依赖库不需要进行解析:${depFilePath}`);
           return
         }
-
-        importPathTransform(curPath, depFilePath).then(filePath=>{
-          let fileDesc = {}
-          if(isJsFilePath(filePath)){
-            // 如果是js、vue、jsx，继续进行依赖分析
-            const codeAst = getCodeAst(filePath)
-            fileDesc = getFileDesc(codeAst)
-            getDep(codeAst, filePath)
-          }
-          // TODO: 可以对其他类型的文件进行解析，获取一些描述
-          depState.addDep(filePath, fileDesc, curFilePath)
-        })
+        importPathTransform(curPath, depFilePath)
+          .then((filePath) => {
+            console.log(`所有需要解析的模块：${filePath}`);
+            
+            let fileDesc = {}
+            if (isJsFilePath(filePath)) {
+              // 如果是js、vue、jsx，继续进行依赖分析
+              const codeAst = getCodeAst(filePath)
+              fileDesc = getFileDesc(codeAst)
+              getDep(codeAst, filePath)
+            }
+            // TODO: 可以对其他类型的文件进行解析，获取一些描述
+            depState.addDep(filePath, fileDesc, curFilePath)
+          })
+          .catch((e) => {
+            console.log(`
+          当前文件路径：${curPath}
+          依赖文件路径：${depFilePath}
+          截取后的路径：${subDepFilePath}
+          `)
+            console.log(e)
+          })
       } catch (error) {
-        // console.log(filePath)
-        throw error
+        console.log(error)
       }
     },
   })
