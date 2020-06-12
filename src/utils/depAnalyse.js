@@ -14,7 +14,7 @@ const matchLoad = require('./load')
 function parse(codeStr) {
   return babylon.parse(codeStr, {
     sourceType: 'module',
-    plugins: ['jsx','classProperties'],
+    plugins: ['jsx', 'classProperties'],
   })
 }
 
@@ -36,11 +36,14 @@ function mouduleAnalyse(curFilePath, depFilePath) {
     importPathTransform(curPath, depFilePath)
       .then((filePath) => {
         let fileDesc = {}
-        if (isJsFilePath(filePath)) {
-          // 如果是js、vue、jsx，继续进行依赖分析
-          const codeAst = getCodeAst(filePath)
-          fileDesc = getFileDesc(codeAst)
-          getDep(codeAst, filePath)
+        if (!depState.hasFileState(filePath)) {
+          // 没被解析过的文件，才需要进行解析
+          if (isJsFilePath(filePath)) {
+            // 如果是js、vue、jsx，继续进行依赖分析
+            const codeAst = getCodeAst(filePath)
+            fileDesc = getFileDesc(codeAst)
+            getDep(codeAst, filePath)
+          }
         }
         // TODO: 可以对其他类型的文件进行解析，获取一些描述
         depState.addDep(filePath, fileDesc, curFilePath)

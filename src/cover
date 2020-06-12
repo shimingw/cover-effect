@@ -25,12 +25,11 @@ function start() {
       // 将文件些人到html模板
       const template = fs.readFileSync(path.join(__dirname, './utils/template.html'),'utf-8')
       
-      fs.writeFileSync(path.join(config.base, 'branchDiffDep.json'), JSON.stringify(branchDiffDep))
-      fs.writeFileSync(path.join(config.base, 'branchDiffData.json'), JSON.stringify(branchDiffData))
-      fs.writeFileSync(path.join(config.base, 'fileDepData.json'), JSON.stringify(fileDepData))
+      // fs.writeFileSync(path.join(config.base, 'branchDiffDep.json'), JSON.stringify(branchDiffDep))
+      // fs.writeFileSync(path.join(config.base, 'branchDiffData.json'), JSON.stringify(branchDiffData))
+      // fs.writeFileSync(path.join(config.base, 'fileDepData.json'), JSON.stringify(fileDepData))
 
       const html = ejs.render(template, { branchDiffDep })
-      
       fs.writeFileSync(path.join(config.base, 'depAnalyse.html'), html)
     })
     .catch((e) => {

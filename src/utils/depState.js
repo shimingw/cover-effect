@@ -9,6 +9,8 @@ class depState {
       //     beDeped: [],
       //   },
     }
+    this.recordFilePath = []
+    this.base = config.base
   }
   getState() {
     return this.state
@@ -21,10 +23,10 @@ class depState {
    */
   addDep(filePath, fileDesc, beDepedFilePath) {
     // 将filePath、beDepedFilePath转换成相对于base的路径
-    const { base } = config
-    filePath = path.relative(base, filePath)
+    // 将绝对路径转换成相对路径
+    filePath = path.relative(this.base, filePath)
     beDepedFilePath = beDepedFilePath
-      ? path.relative(base, beDepedFilePath)
+      ? path.relative(this.base, beDepedFilePath)
       : undefined
     if (!this.hasFileState(filePath)) {
       this.initFileDep(filePath, fileDesc)
@@ -58,6 +60,10 @@ class depState {
    * @returns Boolean
    */
   hasFileState(filePath) {
+    // this.state中存的是相对路径需要转化一下
+    filePath = path.isAbsolute(filePath)
+      ? path.relative(this.base, filePath)
+      : filePath
     return Boolean(this.state[filePath])
   }
 }
