@@ -9,12 +9,14 @@ function loadConfig(fileName) {
   const coverPath = path.join(process.cwd(), '.cover.js')
   const pkgPath = path.join(base, 'package.json')
   const pkg = require(pkgPath)
-  const dependencies = pkg.dependencies
+  const dependencies = {
+    ...pkg.dependencies,
+    ...pkg.devDependencies,
+  }
   const config = require(coverPath)
   config.base = path.dirname(coverPath)
   config.exts = config.exts ? config.exts : exts
   config.dependencies = Object.keys(dependencies)
-  console.log(config);
   return config
 }
 

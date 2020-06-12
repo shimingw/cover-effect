@@ -14,7 +14,7 @@ const matchLoad = require('./load')
 function parse(codeStr) {
   return babylon.parse(codeStr, {
     sourceType: 'module',
-    plugins: ['jsx'],
+    plugins: ['jsx','classProperties'],
   })
 }
 
@@ -23,48 +23,56 @@ function getCodeAst(filePath) {
   return parse(matchLoad(filePath))
 }
 
-function getDep(ast, curFilePath) {
-  // TODO: 解决循环引用问题，a引用b，b又引用a的情况
-  const curPath = path.dirname(curFilePath)
-  traverse(ast, {
-    ImportDeclaration({ node }) {
-      try {
-        // TODO: 使用async await
-        // 需要跳过公共模块的依赖
-        // TODO: react/www,对这种依赖的处理
-        const depFilePath = node.source.value
-        const indexSlash = depFilePath.indexOf('/')
-        const subDepFilePath =
-          indexSlash === -1 ? depFilePath : depFilePath.substring(0, indexSlash)
-        if (config.dependencies.includes(subDepFilePath)) {
-          // 公共依赖库不需要进行解析
-          console.log(`公共依赖库不需要进行解析:${depFilePath}`);
-          return
+function mouduleAnalyse(curFilePath, depFilePath) {
+  try {
+    const curPath = path.dirname(curFilePath)
+    const indexSlash = depFilePath.indexOf('/')
+    const subDepFilePath =
+      indexSlash === -1 ? depFilePath : depFilePath.substring(0, indexSlash)
+    if (config.dependencies.includes(subDepFilePath)) {
+      // 公共依赖库不需要进行解析
+      return
+    }
+    importPathTransform(curPath, depFilePath)
+      .then((filePath) => {
+        let fileDesc = {}
+        if (isJsFilePath(filePath)) {
+          // 如果是js、vue、jsx，继续进行依赖分析
+          const codeAst = getCodeAst(filePath)
+          fileDesc = getFileDesc(codeAst)
+          getDep(codeAst, filePath)
         }
-        importPathTransform(curPath, depFilePath)
-          .then((filePath) => {
-            console.log(`所有需要解析的模块：${filePath}`);
-            
-            let fileDesc = {}
-            if (isJsFilePath(filePath)) {
-              // 如果是js、vue、jsx，继续进行依赖分析
-              const codeAst = getCodeAst(filePath)
-              fileDesc = getFileDesc(codeAst)
-              getDep(codeAst, filePath)
-            }
-            // TODO: 可以对其他类型的文件进行解析，获取一些描述
-            depState.addDep(filePath, fileDesc, curFilePath)
-          })
-          .catch((e) => {
-            console.log(`
+        // TODO: 可以对其他类型的文件进行解析，获取一些描述
+        depState.addDep(filePath, fileDesc, curFilePath)
+      })
+      .catch((e) => {
+        console.log(`
           当前文件路径：${curPath}
           依赖文件路径：${depFilePath}
           截取后的路径：${subDepFilePath}
-          `)
-            console.log(e)
-          })
-      } catch (error) {
-        console.log(error)
+          ${e}
+        `)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+function getDep(ast, curFilePath) {
+  // TODO: 解决循环引用问题，a引用b，b又引用a的情况
+  traverse(ast, {
+    ImportDeclaration({ node }) {
+      // TODO: 使用async await
+      // 需要跳过公共模块的依赖
+      // TODO: react/www,对这种依赖的处理
+      const depFilePath = node.source.value
+      mouduleAnalyse(curFilePath, depFilePath)
+    },
+    CallExpression({ node }) {
+      // 异步模块解析：import('@views/system/index.jsx')
+      if (node.callee.type === 'Import') {
+        const depFilePath = node.arguments[0].value
+        mouduleAnalyse(curFilePath, depFilePath)
       }
     },
   })
