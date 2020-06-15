@@ -1,6 +1,6 @@
 {
   "name": "sncover",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "代码影响范围评估工具",
   "main": "index.js",
   "scripts": {

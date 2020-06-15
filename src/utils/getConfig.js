@@ -25,25 +25,6 @@ function loadConfig() {
 
 const getConfig = (function () {
   const config = loadConfig()
-  // const config = {
-  //   exts,
-  //   alias: {
-  //     '@api':
-  //       'E:\\数据资产项目\\dmafe_git\\datamanagement\\vue_project\\asset_manage\\src\\api',
-  //     '@':
-  //       'E:\\数据资产项目\\dmafe_git\\datamanagement\\vue_project\\asset_manage\\src',
-  //     '@views':
-  //       'E:\\数据资产项目\\dmafe_git\\datamanagement\\vue_project\\asset_manage\\src\\views',
-  //     '@com':
-  //       'E:\\数据资产项目\\dmafe_git\\datamanagement\\vue_project\\asset_manage\\src\\components',
-  //     '@store':
-  //       'E:\\数据资产项目\\dmafe_git\\datamanagement\\vue_project\\asset_manage\\src\\store',
-  //     '@common-components':
-  //       'E:\\数据资产项目\\dmafe_git\\datamanagement\\vue_project\\common\\components',
-  //     '@common-config':
-  //       'E:\\数据资产项目\\dmafe_git\\datamanagement\\vue_project\\common\\config',
-  //   },
-  // }
   return function () {
     return config
   }
