@@ -6,6 +6,7 @@ const {
   importPathTransform,
   getAbsolutePath,
   isJsFilePath,
+  getPathHead,
 } = require('./pathAnalyse')
 const config = require('./getConfig')()
 const { getFileDesc } = require('./commentBlock')
@@ -26,13 +27,12 @@ function getCodeAst(filePath) {
 function mouduleAnalyse(curFilePath, depFilePath) {
   try {
     const curPath = path.dirname(curFilePath)
-    const indexSlash = depFilePath.indexOf('/')
-    const subDepFilePath =
-      indexSlash === -1 ? depFilePath : depFilePath.substring(0, indexSlash)
-    if (config.dependencies.includes(subDepFilePath)) {
+    const pathHead = getPathHead(depFilePath)
+    if (config.dependencies.includes(pathHead)) {
       // 公共依赖库不需要进行解析
       return
     }
+
     importPathTransform(curPath, depFilePath)
       .then((filePath) => {
         let fileDesc = {}
@@ -46,15 +46,15 @@ function mouduleAnalyse(curFilePath, depFilePath) {
           }
         }
         // TODO: 可以对其他类型的文件进行解析，获取一些描述
-        depState.addDep(filePath, fileDesc, curFilePath)
+        depState.addDep(filePath, fileDesc, curFilePath,depFilePath)
       })
       .catch((e) => {
         console.log(`
-          当前文件路径：${curPath}
+          当前文件路径：${curFilePath}
           依赖文件路径：${depFilePath}
-          截取后的路径：${subDepFilePath}
-          ${e}
+          路径头：${pathHead}
         `)
+        throw e
       })
   } catch (error) {
     console.log(error)
