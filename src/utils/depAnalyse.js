@@ -90,7 +90,10 @@ function getFileDep() {
       const fileDesc = getFileDesc(ast)
       depState.addDep(entryFilePath, fileDesc)
       getDep(ast, entryFilePath)
-      resolve(depState.getState())
+      // TODO: getDep的过程是异步的，需要等待所有依赖解析完毕才可以将数据返回，执行resolve
+      setTimeout(() => {
+        resolve(depState.getState())
+      }, 10000);
     } catch (error) {
       reject(error)
     }
