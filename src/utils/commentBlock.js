@@ -1,3 +1,6 @@
+const path = require('path')
+const fs = require('fs')
+
 function getCommentBlock(comments) {
   const commentBlock = comments.find((comment) => {
     if (comment.type !== 'CommentBlock') return false
@@ -32,8 +35,19 @@ function arr2obj(arr) {
   return tmpObj
 }
 
-function getFileDesc(ast) {
-  const fileDescStr = getCommentBlock(ast.comments)
+function getFileDesc(ast, filePath) {
+  let fileDescStr = ''
+  if (path.extname(filePath) === '.vue') {
+    const vueStr = fs.readFileSync(filePath, 'utf-8')
+    const start = vueStr.indexOf('<!--')
+    const end = vueStr.indexOf('-->')
+    const tempLoc = vueStr.indexOf('template')
+    if (end > 0 && end < tempLoc) {
+      fileDescStr = vueStr.substring(start + 4, end)
+    }
+  } else {
+    fileDescStr = getCommentBlock(ast.comments)
+  }
   return compileCommentBlock(fileDescStr)
 }
 

@@ -41,7 +41,7 @@ function mouduleAnalyse(curFilePath, depFilePath) {
           if (isJsFilePath(filePath)) {
             // 如果是js、vue、jsx，继续进行依赖分析
             const codeAst = getCodeAst(filePath)
-            fileDesc = getFileDesc(codeAst)
+            fileDesc = getFileDesc(codeAst, filePath)
             getDep(codeAst, filePath)
           }
         }
@@ -87,13 +87,14 @@ function getFileDep() {
       const { base, entry } = config
       const entryFilePath = getAbsolutePath(base, entry)
       const ast = getCodeAst(entryFilePath)
-      const fileDesc = getFileDesc(ast)
+      const fileDesc = getFileDesc(ast, entryFilePath)
       depState.addDep(entryFilePath, fileDesc)
       getDep(ast, entryFilePath)
-      // TODO: getDep的过程是异步的，需要等待所有依赖解析完毕才可以将数据返回，执行resolve
       setTimeout(() => {
+        // 延时5s等待所有依赖文件扫描完毕再resolve
         resolve(depState.getState())
-      }, 10000);
+      }, 5000)
+      console.log('正在扫描文件,请稍等...')
     } catch (error) {
       reject(error)
     }

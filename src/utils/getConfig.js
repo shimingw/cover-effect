@@ -16,10 +16,8 @@ function loadConfig() {
   const config = require(coverPath)
   config.base = path.dirname(coverPath)
   config.exts = config.exts ? config.exts : exts
-  config.dependencies = config.dependencies
-    ? config.dependencies
-    : Object.keys(dependencies)
-
+  config.dependencies = Object.keys(dependencies)
+  // console.log(config);
   return config
 }
 

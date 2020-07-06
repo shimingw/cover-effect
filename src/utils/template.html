@@ -6,27 +6,63 @@
     <title>Document</title>
   </head>
   <body>
-    <ul>
+    <ul class="cover_content">
       <% branchDiffDep.forEach(function(dep){ %>
-      <li>
+      <li class="content_line">
         <h3><%= dep.file %></h3>
         <p>描述：<span><%= dep.fileDesc.Description %></span></p>
         <p>最后修改：<span><%= dep.fileDesc.LastEditors %></span></p>
         <% if (dep.beDeped.length > 0) { %>
-            <p>影响范围：
-                <ul>
-                    <% dep.beDeped.forEach(function(beDepedFile){ %>
-                        <li>
-                            <p><%= beDepedFile.fileDesc.file %></p>
-                            <p>描述：<span><%= beDepedFile.fileDesc.Description %></span></p>
-                            <p>最后修改：<span><%= beDepedFile.fileDesc.LastEditors %></span></p>
-                        </li>
-                    <% }); %>
-                </ul>
-            </p>
+          <div class="scope_area">
+            <span>影响范围：</span>
+            <ul class="cover_content">
+                <% dep.beDeped.forEach(function(beDepedFile){ %>
+                    <li class="content_line">
+                        <p class="relative_file_title"><%= beDepedFile.fileDesc.file %></p>
+                        <p>描述：<span><%= beDepedFile.fileDesc.Description %></span></p>
+                        <p>最后修改：<span><%= beDepedFile.fileDesc.LastEditors %></span></p>
+                    </li>
+                <% }); %>
+            </ul>
+          </div>
         <% } %>
       </li>
       <% }); %>
     </ul>
   </body>
+  <style>
+    body {
+      background: #f5f5f5;
+    }
+    .cover_content h3 {
+      margin: 12px 0;
+    }
+    .cover_content p {
+      margin: 3px 0;
+    }
+    .cover_content {
+      margin: 0px;
+      padding: 10px;
+      background: #f5f5f5;
+      list-style: none;
+    }
+    .cover_content .content_line {
+      padding: 10px 20px;
+      margin-bottom: 10px;
+      background: white;
+    }
+    .cover_content .content_line:last-child {
+      margin-bottom: 0;
+    }
+    .scope_area {
+      display: flex;
+      align-items: flex-start;
+    }
+    .scope_area .cover_content {
+      flex-grow: 2;
+    }
+    .relative_file_title {
+      font-weight: 700;
+    }
+  </style>
 </html>
