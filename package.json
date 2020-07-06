@@ -1,6 +1,6 @@
 {
   "name": "cover",
-  "version": "1.0.0",
+  "version": "1.1.4",
   "description": "代码影响范围评估工具",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,6 @@
     "babel-preset-react-app": "^9.1.2",
     "ejs": "^3.1.3",
     "simple-git": "^2.6.0",
-    "util-promisify": "^2.1.0",
-    "vue-template-compiler": "^2.6.11"
+    "util-promisify": "^2.1.0"
   }
 }
