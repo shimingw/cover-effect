@@ -30,6 +30,7 @@ function start() {
       const html = ejs.render(template, { branchDiffDep })
       
       fs.writeFileSync(path.join(config.base, 'depAnalyse.html'), html)
+      console.log('文件差异化扫描完成,详情见根目录depAnalyse.html文件')
     })
     .catch((e) => {
       console.log(e)

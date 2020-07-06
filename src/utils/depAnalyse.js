@@ -39,7 +39,7 @@ function getDep(ast, curFilePath) {
           if(isJsFilePath(filePath)){
             // 如果是js、vue、jsx，继续进行依赖分析
             const codeAst = getCodeAst(filePath)
-            fileDesc = getFileDesc(codeAst)
+            fileDesc = getFileDesc(codeAst, filePath)
             getDep(codeAst, filePath)
           }
           // TODO: 可以对其他类型的文件进行解析，获取一些描述
@@ -59,10 +59,14 @@ function getFileDep() {
       const { base, entry } = config
       const entryFilePath = getAbsolutePath(base, entry)
       const ast = getCodeAst(entryFilePath)
-      const fileDesc = getFileDesc(ast)
+      const fileDesc = getFileDesc(ast, entryFilePath)
       depState.addDep(entryFilePath, fileDesc)
       getDep(ast, entryFilePath)
-      resolve(depState.getState())
+      setTimeout(() => {
+        // 延时5s等待所有依赖文件扫描完毕再resolve
+        resolve(depState.getState())
+      }, 5000)
+      console.log('正在扫描文件,请稍等...')
     } catch (error) {
       reject(error)
     }

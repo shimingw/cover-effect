@@ -14,7 +14,7 @@ function loadConfig(fileName) {
   config.base = path.dirname(coverPath)
   config.exts = config.exts ? config.exts : exts
   config.dependencies = Object.keys(dependencies)
-  console.log(config);
+  // console.log(config);
   return config
 }
 
