@@ -2,15 +2,12 @@
   "name": "cover",
   "version": "1.1.4",
   "description": "代码影响范围评估工具",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "dev": "nodemon ./src/index.js"
+    "dev": "nodemon ./example/gitReporTmpDir/index.js"
   },
   "author": "shimingwen",
   "license": "ISC",
-  "bin": {
-    "cover": "./src/cover"
-  },
   "devDependencies": {
     "nodemon": "^2.0.4"
   },
