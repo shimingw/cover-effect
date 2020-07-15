@@ -73,11 +73,24 @@ module.exports = class cover {
         dependencies: this.dependencies,
         alias: this.options.alias,
       })
-      const fileDep = await fileDepAnalyse.getFileDep()
-      console.log(fileDep)
-
+      const fileDepData = await fileDepAnalyse.getFileDep()
+      const branchDiffData = await this.getDiffSummary()
+      const branchDiffDep = getBranchDiffDep(
+        fileDepData,
+        branchDiffData,
+        this.cloneRepoDirPath
+      )
+      // // html模板
+      // const template = fs.readFileSync(
+      //   path.join(__dirname, './utils/template.html'),
+      //   'utf-8'
+      // )
+      // const html = ejs.render(template, { branchDiffDep })
+      // fs.writeFileSync(path.join(this.options.clonePath, 'depAnalyse.html'), html)
+      // console.log('文件差异化扫描完成,详情见根目录depAnalyse.html文件')
       // 执行完毕将临时目录删除
-      // this.delTmpDir()
+      this.delTmpDir()
+      resolve(branchDiffDep)
     })
   }
   cloneRepo() {
@@ -99,14 +112,10 @@ module.exports = class cover {
     )
   }
   getDiffSummary() {
-    return this.git
-      .diffSummary([
-        this.getOriginBranch(this.options.oldBranch),
-        this.getOriginBranch(this.options.newBranch),
-      ])
-      .then((data) => {
-        console.log(data)
-      })
+    return this.git.diffSummary([
+      this.getOriginBranch(this.options.oldBranch),
+      this.getOriginBranch(this.options.newBranch),
+    ])
   }
   getOriginBranch(branchName) {
     return `origin/${branchName}`
@@ -123,6 +132,6 @@ module.exports = class cover {
       ...pkg.dependencies,
       ...pkg.devDependencies,
     }
-    this.dependencies = Object.keys(dependencies)
+    this.dependencies = Object.keys(dependencies).concat('node_modules')
   }
 }

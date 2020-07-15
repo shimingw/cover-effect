@@ -27,15 +27,12 @@ function getBranchDiffDep(fileDepData, branchDiffData, cloneRepoDirPath) {
   const branchDiffFiles = branchDiffData.files
   const BranchDiffDep = []
   for (const branchDiffFile of branchDiffFiles) {
-    const branchDiffFilePath = path.relative(
-      cloneRepoDirPath,
-      branchDiffFile.file
-    )
-    if (Reflect.has(fileDepData, branchDiffFilePath)) {
+    branchDiffFile.file = branchDiffFile.file.replace(/\//g, path.sep)
+    if (Reflect.has(fileDepData, branchDiffFile.file)) {
       BranchDiffDep.push({
         ...branchDiffFile,
-        ...fileDepData[branchDiffFilePath],
-        file: branchDiffFilePath,
+        ...fileDepData[branchDiffFile.file],
+        file: branchDiffFile.file,
       })
     }
   }
