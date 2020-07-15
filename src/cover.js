@@ -54,6 +54,7 @@ class cover {
       oldBranch: options.oldBranch,
       newBranch: options.newBranch,
       alias: options.alias,
+      repository: options.repository,
     }
   }
   getEffectScopeData() {
@@ -101,7 +102,7 @@ class cover {
   cloneRepo() {
     return this.git
       .silent(true)
-      .clone('git@git.cnsuning.com:damfe/data_check.git', this.cloneRepoDirPath)
+      .clone(this.options.repository, this.cloneRepoDirPath)
   }
   createTmpDir() {
     // 使用随机字符串生成一个tmp目录用来存放clone下来的仓库
