@@ -112,6 +112,7 @@ class FileDepAnalyse {
         })
         .catch((e) => {
           console.log(`
+            路径解析错误
             当前文件路径：${curFilePath}
             依赖文件路径：${depFilePath}
             路径头：${pathHead}
