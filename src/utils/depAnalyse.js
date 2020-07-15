@@ -57,11 +57,14 @@ class FileDepAnalyse {
         this.getDep(ast, entryFilePath)
         setTimeout(() => {
           // 延时5s等待所有依赖文件扫描完毕再resolve
-          resolve(this.depState.getState())
+          resolve({
+            fileDepData: this.depState.state,
+            error: this.depState.error,
+          })
         }, 5000)
         console.log('正在扫描文件,请稍等...')
       } catch (error) {
-        reject(error)
+        console.log(error)
       }
     })
   }
@@ -71,13 +74,11 @@ class FileDepAnalyse {
     traverse(ast, {
       ImportDeclaration({ node }) {
         // TODO: 使用async await
-        // 需要跳过公共模块的依赖
-        // TODO: react/www,对这种依赖的处理
         const depFilePath = node.source.value
         _this.mouduleAnalyse(curFilePath, depFilePath)
       },
+      // 异步模块解析：import('@views/system/index.jsx')
       CallExpression({ node }) {
-        // 异步模块解析：import('@views/system/index.jsx')
         if (node.callee.type === 'Import') {
           const depFilePath = node.arguments[0].value
           _this.mouduleAnalyse(curFilePath, depFilePath)
@@ -87,41 +88,38 @@ class FileDepAnalyse {
   }
 
   mouduleAnalyse(curFilePath, depFilePath) {
-    try {
-      const curPath = path.dirname(curFilePath)
-      const pathHead = getPathHead(depFilePath)
-      if (this.dependencies.includes(pathHead)) {
-        // 公共依赖库不需要进行解析
-        return
-      }
-
-      importPathTransform(curPath, depFilePath, this.alias)
-        .then((filePath) => {
-          let fileDesc = {}
-          if (!this.depState.hasFileState(filePath)) {
-            // 没被解析过的文件，才需要进行解析
-            if (isJsFilePath(filePath)) {
-              // 如果是js、vue、jsx，继续进行依赖分析
-              const codeAst = getCodeAst(filePath)
-              fileDesc = getFileDesc(codeAst, filePath)
-              this.getDep(codeAst, filePath)
-            }
-          }
-          // TODO: 可以对其他类型的文件进行解析，获取一些描述
-          this.depState.addDep(filePath, fileDesc, curFilePath, depFilePath)
-        })
-        .catch((e) => {
-          console.log(`
-            路径解析错误
-            当前文件路径：${curFilePath}
-            依赖文件路径：${depFilePath}
-            路径头：${pathHead}
-          `)
-          throw e
-        })
-    } catch (error) {
-      console.log(error)
+    const curPath = path.dirname(curFilePath)
+    const pathHead = getPathHead(depFilePath)
+    if (this.dependencies.includes(pathHead)) {
+      // 公共依赖库不需要进行解析
+      return
     }
+
+    importPathTransform(curPath, depFilePath, this.alias)
+      .then((filePath) => {
+        let fileDesc = {}
+        if (!this.depState.hasFileState(filePath)) {
+          // 没被解析过的文件，才需要进行解析
+          if (isJsFilePath(filePath)) {
+            // 如果是js、vue、jsx，继续进行依赖分析
+            const codeAst = getCodeAst(filePath)
+            fileDesc = getFileDesc(codeAst, filePath)
+            this.getDep(codeAst, filePath)
+          }
+        }
+        // TODO: 可以对其他类型的文件进行解析，获取一些描述
+        this.depState.addDep(filePath, fileDesc, curFilePath, depFilePath)
+      })
+      .catch((error) => {
+        this.depState.addError({
+          curFilePath,
+          depFilePath,
+          pathHead,
+          error,
+        })
+        // 有路径解析错误直接退出进程
+        process.exit(this.depState.error)
+      })
   }
   transformAlias(alias) {
     const aliasTmp = {}

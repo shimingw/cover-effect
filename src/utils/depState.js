@@ -9,10 +9,8 @@ module.exports = class depState {
       //   },
     }
     this.recordFilePath = []
+    this.error = []
     this.base = base
-  }
-  getState() {
-    return this.state
   }
   /**
    *
@@ -64,5 +62,8 @@ module.exports = class depState {
       ? path.relative(this.base, filePath)
       : filePath
     return Boolean(this.state[filePath])
+  }
+  addError(e){
+    this.error.push(e)
   }
 }

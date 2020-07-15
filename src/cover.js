@@ -36,7 +36,7 @@ const simpleGit = require('simple-git')
 
 // start()
 
-module.exports = class cover {
+class cover {
   constructor(options) {
     this.setOption(options)
     // 临时clone目录ming
@@ -73,7 +73,8 @@ module.exports = class cover {
         dependencies: this.dependencies,
         alias: this.options.alias,
       })
-      const fileDepData = await fileDepAnalyse.getFileDep()
+      const { fileDepData, error } = await fileDepAnalyse.getFileDep()
+      // 如果有错误则抛出异常
       const branchDiffData = await this.getDiffSummary()
       const branchDiffDep = getBranchDiffDep(
         fileDepData,
@@ -91,6 +92,9 @@ module.exports = class cover {
       // 执行完毕将临时目录删除
       this.delTmpDir()
       resolve(branchDiffDep)
+    }).catch((e) => {
+      this.delTmpDir()
+      throw e
     })
   }
   cloneRepo() {

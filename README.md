@@ -1,25 +1,34 @@
 ## 介绍
+
 这是一个代码影响范围评估工具，可以对两个分支的`diff`文件，进行分析，获取每个文件的依赖影响以及文件描述。本工具支持对`.vue`、`.jsx`、`.js`文件进行分析
 
 ## 安装
-`npm install -D sncover`
 
-## 配置
-**配置文件**
+`npm install -S sncover`
 
-安装根目录下创建`.cover.js`配置文件
+## 使用
+
 ```js
-const path = require('path')
+const cover = require('sncover')
+const coverExamle = new cover({
+  clonePath: __dirname, //将仓库clone至指定目录
+  entry: './src/index.js', // 仓库入口文件
+  oldBranch: 'data_check_wangas_0215', //需要比较的老分支
+  newBranch: 'data_check_wangas_0406', //需要比较的新分支
+  alias: {
+    // webpack中的alias，以仓库为根目录的相对路径
+    '@assets': 'src/assets',
+    '@store': 'src/store',
+    '@views': 'src/views',
+    '@server': 'src/server',
+    '@components': 'src/components',
+    '@util': 'src/util',
+  },
+})
 
-module.exports = {
-  entry: './index.js',  // 项目入口
-  oldBranch: 'test',    // 需要对比的老分支
-  newBranch: 'master',  // 需要对比的新分支
-  alias:{               // 配置webpack中的路径别名
-    '@a': path.join(__dirname, 'src', 'moduleA'),
-    '@b': path.join(__dirname, 'src', 'moduleB'),
-  }
-}
+coverExamle.getEffectScopeData().then((data) => {
+  console.log('获取最终数据:', data)
+})
 ```
 
 **文件描述配置**
@@ -33,8 +42,5 @@ module.exports = {
  * @Date: 2020-06-04 14:35:31
  * @LastEditTime: 2020-06-04 18:01:39
  * @LastEditors: shimingwen
- */ 
+ */
 ```
-
-## 使用
-在根目录下执行`npx cover`，即可生成名为`depAnalyse.html`的依赖分析文件。
