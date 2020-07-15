@@ -72,6 +72,7 @@ class cover {
         entry: this.options.entry,
         dependencies: this.dependencies,
         alias: this.options.alias,
+        cover: this,
       })
       const { fileDepData, error } = await fileDepAnalyse.getFileDep()
       // 如果有错误则抛出异常
@@ -139,3 +140,19 @@ class cover {
     this.dependencies = Object.keys(dependencies).concat('node_modules')
   }
 }
+
+process.on('message', function (params) {
+  if (params.status === 'start') {
+    const coverExamle = new cover(params.options)
+    coverExamle
+      .getEffectScopeData()
+      .then((data) => {
+        // console.log('获取最终数据:', data)
+        process.send({
+          status: 'success',
+          data,
+        })
+      })
+      .catch()
+  }
+})

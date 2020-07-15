@@ -46,6 +46,7 @@ class FileDepAnalyse {
     this.dependencies = options.dependencies
     this.alias = this.transformAlias(options.alias)
     this.depState = new DepState(this.cloneRepoDirPath)
+    this.cover = options.cover
   }
   getFileDep() {
     return new Promise((resolve, reject) => {
@@ -64,7 +65,7 @@ class FileDepAnalyse {
         }, 5000)
         console.log('正在扫描文件,请稍等...')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     })
   }
@@ -117,8 +118,12 @@ class FileDepAnalyse {
           pathHead,
           error,
         })
+        this.cover.delTmpDir()
         // 有路径解析错误直接退出进程
-        process.exit(this.depState.error)
+        process.send({
+          status: 'error',
+          data: this.depState.error,
+        })
       })
   }
   transformAlias(alias) {

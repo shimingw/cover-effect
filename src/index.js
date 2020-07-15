@@ -1,20 +1,20 @@
-const { fork } = require('child_process')
-
-const child = fork('src/cover.js', [
-  {
-    clonePath: __dirname,
-    entry: './src/index.js',
-    oldBranch: 'data_check_wangas_0215',
-    newBranch: 'data_check_wangas_0406',
-    alias: {
-      '@assets': 'src/assets',
-      '@store': 'src/store',
-      '@views': 'src/views',
-      '@server': 'src/server',
-      '@components': 'src/components',
-      '@util': 'src/util',
-    },
-  },
-])
-
-// console.log(child)
+module.exports = function (options) {
+  return new Promise((resolve, reject) => {
+    const { fork } = require('child_process')
+    const child = fork('src/cover.js')
+    child.on('message', (message) => {
+      if (message.status === 'success') {
+        resolve(message.data)
+      }
+      if (message.status === 'error') {
+        // 杀死子进程
+        child.kill()
+        reject(message.data)
+      }
+    })
+    child.send({
+      status: 'start',
+      options,
+    })
+  })
+}
