@@ -148,12 +148,13 @@ process.on('message', function (params) {
     coverExamle
       .getEffectScopeData()
       .then((data) => {
-        // console.log('获取最终数据:', data)
         process.send({
           status: 'success',
           data,
         })
       })
-      .catch()
+      .catch((e) => {
+        console.log(e)
+      })
   }
 })

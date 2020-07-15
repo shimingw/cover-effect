@@ -16,7 +16,7 @@ module.exports = class depState {
    *
    * @param {*} filePath 文件路径
    * @param {*} fileDesc 文件描述
-   * @param {*} beDepedFilePath 依赖改文件的路径
+   * @param {*} beDepedFilePath 被依赖文件的路径
    */
   addDep(filePath, fileDesc, beDepedFilePath) {
     // 将filePath、beDepedFilePath转换成相对于base的路径
@@ -48,7 +48,10 @@ module.exports = class depState {
   }
   addFileBeDeped(filePath, beDepedFilePath) {
     if (this.hasFileState(filePath)) {
-      this.state[filePath].beDeped.push(this.state[beDepedFilePath])
+      this.state[filePath].beDeped.push({
+        ...this.state[beDepedFilePath],
+        beDeped:undefined
+      })
     }
   }
   /**
@@ -63,7 +66,7 @@ module.exports = class depState {
       : filePath
     return Boolean(this.state[filePath])
   }
-  addError(e){
+  addError(e) {
     this.error.push(e)
   }
 }

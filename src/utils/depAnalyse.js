@@ -65,7 +65,7 @@ class FileDepAnalyse {
         }, 5000)
         console.log('正在扫描文件,请稍等...')
       } catch (error) {
-        // console.log(error)
+        console.log(error)
       }
     })
   }
@@ -109,7 +109,7 @@ class FileDepAnalyse {
           }
         }
         // TODO: 可以对其他类型的文件进行解析，获取一些描述
-        this.depState.addDep(filePath, fileDesc, curFilePath, depFilePath)
+        this.depState.addDep(filePath, fileDesc, curFilePath)
       })
       .catch((error) => {
         this.depState.addError({

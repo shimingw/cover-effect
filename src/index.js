@@ -4,6 +4,7 @@ module.exports = function (options) {
     const child = fork('src/cover.js')
     child.on('message', (message) => {
       if (message.status === 'success') {
+        child.kill()
         resolve(message.data)
       }
       if (message.status === 'error') {
