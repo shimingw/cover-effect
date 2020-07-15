@@ -1,8 +1,7 @@
 const path = require('path')
-const config = require('./getConfig')()
 
-class depState {
-  constructor() {
+module.exports = class depState {
+  constructor(base) {
     this.state = {
       // fileName: {
       //     fileDesc: {},
@@ -10,7 +9,7 @@ class depState {
       //   },
     }
     this.recordFilePath = []
-    this.base = config.base
+    this.base = base
   }
   getState() {
     return this.state
@@ -67,5 +66,3 @@ class depState {
     return Boolean(this.state[filePath])
   }
 }
-
-module.exports = new depState()

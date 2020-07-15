@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 const promisify = require('util-promisify')
-const config = require('./getConfig')()
 const stat = promisify(fs.stat)
 
 function getAbsolutePath(curPath, relativePath) {
@@ -17,10 +16,10 @@ function getAbsolutePath(curPath, relativePath) {
  * @param {*} relativePath 被依赖文件（import）文件的路径
  * @returns
  */
-async function importPathTransform(curPath, relativePath) {
+async function importPathTransform(curPath, relativePath, alias) {
   // TODO:这里要进行文件后缀名匹配
   // 解析命名别名
-  relativePath = replaceAlias(relativePath)
+  relativePath = replaceAlias(relativePath, alias)
 
   // 将相对路径转化成绝对路径
   const absolutePath = getAbsolutePath(curPath, relativePath)
@@ -29,8 +28,7 @@ async function importPathTransform(curPath, relativePath) {
   return await getVaildPath(absolutePath)
 }
 
-function replaceAlias(relativePath) {
-  const { alias } = config
+function replaceAlias(relativePath, alias) {
   const pathHead = getPathHead(relativePath)
   const aliasPath = alias[pathHead]
   if (aliasPath === undefined) return relativePath
@@ -81,7 +79,7 @@ async function getVaildPath(filePath) {
 }
 
 async function matchSuffix(filePath) {
-  const { exts } = config
+  const exts = ['.js', '.vue', '.jsx', '.json', '.svg', '.png', '.jpg']
   for (const ext of exts) {
     const guessPath = `${filePath}${ext}`
     const rst = await isFile(guessPath)
