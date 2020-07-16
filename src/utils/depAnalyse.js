@@ -116,7 +116,7 @@ class FileDepAnalyse {
           curFilePath,
           depFilePath,
           pathHead,
-          error,
+          msg:'路径解析错误',
         })
         this.cover.delTmpDir()
         // 有路径解析错误直接退出进程

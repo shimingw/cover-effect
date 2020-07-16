@@ -138,7 +138,7 @@ class cover {
       ...pkg.dependencies,
       ...pkg.devDependencies,
     }
-    this.dependencies = Object.keys(dependencies).concat('node_modules')
+    this.dependencies = Object.keys(dependencies).concat(['node_modules'])
   }
 }
 
