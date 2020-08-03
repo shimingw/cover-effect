@@ -36,8 +36,8 @@ const simpleGit = require('simple-git')
 
 // start()
 
-class cover {
-  constructor(options) {
+class Cover {
+  constructor (options) {
     this.setOption(options)
     // 临时clone目录ming
     this.tmpDir = undefined
@@ -47,17 +47,19 @@ class cover {
     this.git = undefined
     this.dependencies = []
   }
-  setOption(options) {
+
+  setOption (options) {
     this.options = {
       clonePath: options.clonePath,
       entry: options.entry,
       oldBranch: options.oldBranch,
       newBranch: options.newBranch,
       alias: options.alias,
-      repository: options.repository,
+      repository: options.repository
     }
   }
-  getEffectScopeData() {
+
+  getEffectScopeData () {
     return new Promise(async (resolve, reject) => {
       // 创建clone目录
       this.createTmpDir()
@@ -73,9 +75,9 @@ class cover {
         entry: this.options.entry,
         dependencies: this.dependencies,
         alias: this.options.alias,
-        cover: this,
+        cover: this
       })
-      const { fileDepData, error } = await fileDepAnalyse.getFileDep()
+      const { fileDepData } = await fileDepAnalyse.getFileDep()
       // 如果有错误则抛出异常
       const branchDiffData = await this.getDiffSummary()
       const branchDiffDep = getBranchDiffDep(
@@ -99,44 +101,51 @@ class cover {
       throw e
     })
   }
-  cloneRepo() {
+
+  cloneRepo () {
     return this.git
       .silent(true)
       .clone(this.options.repository, this.cloneRepoDirPath)
   }
-  createTmpDir() {
+
+  createTmpDir () {
     // 使用随机字符串生成一个tmp目录用来存放clone下来的仓库
     this.tmpDir = parseInt(Math.random() * 1000000000).toString()
     this.cloneRepoDirPath = path.join(this.options.clonePath, this.tmpDir)
     fs.mkdirSync(this.cloneRepoDirPath)
     this.git = simpleGit(this.cloneRepoDirPath)
   }
-  checkoutNewBranch() {
+
+  checkoutNewBranch () {
     return this.git.checkoutBranch(
       this.options.newBranch,
       this.getOriginBranch(this.options.newBranch)
     )
   }
-  getDiffSummary() {
+
+  getDiffSummary () {
     return this.git.diffSummary([
       this.getOriginBranch(this.options.oldBranch),
-      this.getOriginBranch(this.options.newBranch),
+      this.getOriginBranch(this.options.newBranch)
     ])
   }
-  getOriginBranch(branchName) {
+
+  getOriginBranch (branchName) {
     return `origin/${branchName}`
   }
-  delTmpDir() {
+
+  delTmpDir () {
     const spawnSync = require('child_process').spawnSync
     const child = spawnSync('rm', ['-r', '-f', this.cloneRepoDirPath])
     return child.error
   }
-  getDependencies() {
+
+  getDependencies () {
     const pkgPath = path.join(this.cloneRepoDirPath, 'package.json')
     const pkg = require(pkgPath)
     const dependencies = {
       ...pkg.dependencies,
-      ...pkg.devDependencies,
+      ...pkg.devDependencies
     }
     this.dependencies = Object.keys(dependencies).concat(['node_modules'])
   }
@@ -144,13 +153,13 @@ class cover {
 
 process.on('message', function (params) {
   if (params.status === 'start') {
-    const coverExamle = new cover(params.options)
+    const coverExamle = new Cover(params.options)
     coverExamle
       .getEffectScopeData()
       .then((data) => {
         process.send({
           status: 'success',
-          data,
+          data
         })
       })
       .catch((e) => {

@@ -13,7 +13,7 @@ const filePath = 'E:\\代码影响范围评估工具\\example\\src\\moduleB'
 // console.log(err,stats)
 // console.log(stats.isFile());
 
-function getVaildPath(filePath, ext) {
+function getVaildPath (filePath, ext) {
   return stat(filePath)
     .then((stats) => {
       if (stats.isFile()) {
@@ -35,7 +35,7 @@ function getVaildPath(filePath, ext) {
     })
 }
 
-async function matchSuffix(filePath) {
+async function matchSuffix (filePath) {
   for (const ext of exts) {
     const guessPath = `${filePath}.${ext}`
     const rst = await getVaildPath(guessPath)

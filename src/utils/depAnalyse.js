@@ -6,24 +6,24 @@ const {
   importPathTransform,
   getAbsolutePath,
   isJsFilePath,
-  getPathHead,
+  getPathHead
 } = require('./pathAnalyse')
 const { getFileDesc } = require('./commentBlock')
 const matchLoad = require('./load')
 
-function parse(codeStr) {
+function parse (codeStr) {
   return babylon.parse(codeStr, {
     sourceType: 'module',
-    plugins: ['jsx', 'classProperties'],
+    plugins: ['jsx', 'classProperties']
   })
 }
 
-function getCodeAst(filePath) {
+function getCodeAst (filePath) {
   // 判断文件后缀
   return parse(matchLoad(filePath))
 }
 
-function getBranchDiffDep(fileDepData, branchDiffData, cloneRepoDirPath) {
+function getBranchDiffDep (fileDepData, branchDiffData, cloneRepoDirPath) {
   const branchDiffFiles = branchDiffData.files
   const BranchDiffDep = []
   for (const branchDiffFile of branchDiffFiles) {
@@ -32,7 +32,7 @@ function getBranchDiffDep(fileDepData, branchDiffData, cloneRepoDirPath) {
       BranchDiffDep.push({
         ...branchDiffFile,
         ...fileDepData[branchDiffFile.file],
-        file: branchDiffFile.file,
+        file: branchDiffFile.file
       })
     }
   }
@@ -40,7 +40,7 @@ function getBranchDiffDep(fileDepData, branchDiffData, cloneRepoDirPath) {
 }
 
 class FileDepAnalyse {
-  constructor(options) {
+  constructor (options) {
     this.cloneRepoDirPath = options.cloneRepoDirPath
     this.entry = options.entry
     this.dependencies = options.dependencies
@@ -48,7 +48,8 @@ class FileDepAnalyse {
     this.depState = new DepState(this.cloneRepoDirPath)
     this.cover = options.cover
   }
-  getFileDep() {
+
+  getFileDep () {
     return new Promise((resolve, reject) => {
       try {
         const entryFilePath = getAbsolutePath(this.cloneRepoDirPath, this.entry)
@@ -60,7 +61,7 @@ class FileDepAnalyse {
           // 延时5s等待所有依赖文件扫描完毕再resolve
           resolve({
             fileDepData: this.depState.state,
-            error: this.depState.error,
+            error: this.depState.error
           })
         }, 5000)
         console.log('正在扫描文件,请稍等...')
@@ -69,26 +70,27 @@ class FileDepAnalyse {
       }
     })
   }
-  getDep(ast, curFilePath) {
+
+  getDep (ast, curFilePath) {
     const _this = this
     // TODO: 解决循环引用问题，a引用b，b又引用a的情况
     traverse(ast, {
-      ImportDeclaration({ node }) {
+      ImportDeclaration ({ node }) {
         // TODO: 使用async await
         const depFilePath = node.source.value
         _this.mouduleAnalyse(curFilePath, depFilePath)
       },
       // 异步模块解析：import('@views/system/index.jsx')
-      CallExpression({ node }) {
+      CallExpression ({ node }) {
         if (node.callee.type === 'Import') {
           const depFilePath = node.arguments[0].value
           _this.mouduleAnalyse(curFilePath, depFilePath)
         }
-      },
+      }
     })
   }
 
-  mouduleAnalyse(curFilePath, depFilePath) {
+  mouduleAnalyse (curFilePath, depFilePath) {
     const curPath = path.dirname(curFilePath)
     const pathHead = getPathHead(depFilePath)
     if (this.dependencies.includes(pathHead)) {
@@ -111,22 +113,23 @@ class FileDepAnalyse {
         // TODO: 可以对其他类型的文件进行解析，获取一些描述
         this.depState.addDep(filePath, fileDesc, curFilePath)
       })
-      .catch((error) => {
+      .catch(() => {
         this.depState.addError({
           curFilePath,
           depFilePath,
           pathHead,
-          msg:'路径解析错误',
+          msg: '路径解析错误'
         })
         this.cover.delTmpDir()
         // 有路径解析错误直接退出进程
         process.send({
           status: 'error',
-          data: this.depState.error,
+          data: this.depState.error
         })
       })
   }
-  transformAlias(alias) {
+
+  transformAlias (alias) {
     const aliasTmp = {}
     for (const [key, value] of Object.entries(alias)) {
       aliasTmp[key] = path.join(this.cloneRepoDirPath, value)

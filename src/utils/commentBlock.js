@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 
-function getCommentBlock(comments) {
+function getCommentBlock (comments) {
   const commentBlock = comments.find((comment) => {
     if (comment.type !== 'CommentBlock') return false
     const value = comment.value
@@ -11,7 +11,7 @@ function getCommentBlock(comments) {
   return commentBlock ? commentBlock.value : ''
 }
 
-function compileCommentBlock(commentBlock) {
+function compileCommentBlock (commentBlock) {
   // 如果没有文件描述则返回一个空对象
   if (!commentBlock) return {}
   // 是否采用key，value的形式
@@ -21,13 +21,13 @@ function compileCommentBlock(commentBlock) {
     const key = descStr.substring(1, index)
     const val = descStr.substring(index + 1)
     return {
-      [key]: val,
+      [key]: val
     }
   })
   return arr2obj(descObjList)
 }
 
-function arr2obj(arr) {
+function arr2obj (arr) {
   const tmpObj = {}
   for (const iterator of arr) {
     Object.assign(tmpObj, iterator)
@@ -35,7 +35,7 @@ function arr2obj(arr) {
   return tmpObj
 }
 
-function getFileDesc(ast, filePath) {
+function getFileDesc (ast, filePath) {
   let fileDescStr = ''
   if (path.extname(filePath) === '.vue') {
     const vueStr = fs.readFileSync(filePath, 'utf-8')
@@ -54,5 +54,5 @@ function getFileDesc(ast, filePath) {
 module.exports = {
   getCommentBlock,
   compileCommentBlock,
-  getFileDesc,
+  getFileDesc
 }

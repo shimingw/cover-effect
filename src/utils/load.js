@@ -2,16 +2,16 @@ const path = require('path')
 const fs = require('fs')
 const compiler = require('vue-template-compiler')
 
-function vueLoad(filePath) {
+function vueLoad (filePath) {
   const codeStr = getCodeStr(filePath)
   return compiler.parseComponent(codeStr).script.content
 }
 
-function getCodeStr(filePath) {
+function getCodeStr (filePath) {
   return fs.readFileSync(filePath, 'utf-8')
 }
 
-function matchLoad(filePath) {
+function matchLoad (filePath) {
   const ext = path.extname(filePath)
   if (ext === '.vue') {
     return vueLoad(filePath)

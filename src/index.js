@@ -15,7 +15,7 @@ module.exports = function (options) {
     })
     child.send({
       status: 'start',
-      options,
+      options
     })
   })
 }

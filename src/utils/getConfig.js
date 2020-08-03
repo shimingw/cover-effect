@@ -4,14 +4,14 @@ const fs = require('fs')
 const exts = ['.js', '.vue', '.jsx', '.json', '.svg', '.png', '.jpg']
 // 补充package中依赖库的数据，依赖数据解析时，需要跳过依赖库的解析
 
-function loadConfig() {
+function loadConfig () {
   const base = process.cwd()
   const coverPath = path.join(process.cwd(), '.cover.js')
   const pkgPath = path.join(base, 'package.json')
   const pkg = require(pkgPath)
   const dependencies = {
     ...pkg.dependencies,
-    ...pkg.devDependencies,
+    ...pkg.devDependencies
   }
   const config = require(coverPath)
   config.base = path.dirname(coverPath)
