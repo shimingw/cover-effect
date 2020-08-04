@@ -4,7 +4,7 @@
 
 ## 安装
 
-`npm install -S cover-effect`
+`npm install -save-dev cover-effect`
 
 ## 配置
 **配置文件**
