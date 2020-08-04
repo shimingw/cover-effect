@@ -1,6 +1,6 @@
 {
   "name": "cover-effect",
-  "version": "0.0.1-beta.2",
+  "version": "0.0.1-beta-2",
   "description": "代码影响范围评估工具",
   "main": "./src/cover.js",
   "scripts": {
