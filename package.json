@@ -1,16 +1,20 @@
 {
   "name": "cover-effect",
-  "version": "1.0.0",
+  "version": "0.0.1-beta.1",
   "description": "代码影响范围评估工具",
   "main": "./src/cover.js",
   "scripts": {
     "dev": "nodemon --watch ./src ./example/gitReporTmpDir/index.js",
     "dev-node": "nodemon --watch ./src ./example/gitReporTmpDir/node.js"
   },
+  "bin": {
+    "cover": "./src/index"
+  },
   "author": "shimingwen",
   "license": "ISC",
   "devDependencies": {
     "body-parser": "^1.19.0",
+    "chalk": "^4.1.0",
     "commitizen": "^4.1.2",
     "cz-conventional-changelog": "^3.2.0",
     "eslint": "^7.6.0",

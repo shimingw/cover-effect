@@ -2,6 +2,8 @@ const path = require('path')
 const babylon = require('@babel/parser')
 const traverse = require('@babel/traverse').default
 const DepState = require('./depState')
+const {errorLog} = require('./log')
+
 const {
   importPathTransform,
   getAbsolutePath,
@@ -23,7 +25,7 @@ function getCodeAst (filePath) {
   return parse(matchLoad(filePath))
 }
 
-function getBranchDiffDep (fileDepData, branchDiffData, cloneRepoDirPath) {
+function getBranchDiffDep (fileDepData, branchDiffData, repoDirPath) {
   const branchDiffFiles = branchDiffData.files
   const BranchDiffDep = []
   for (const branchDiffFile of branchDiffFiles) {
@@ -41,28 +43,25 @@ function getBranchDiffDep (fileDepData, branchDiffData, cloneRepoDirPath) {
 
 class FileDepAnalyse {
   constructor (options) {
-    this.cloneRepoDirPath = options.cloneRepoDirPath
+    this.repoDirPath = options.repoDirPath
     this.entry = options.entry
     this.dependencies = options.dependencies
     this.alias = this.transformAlias(options.alias)
-    this.depState = new DepState(this.cloneRepoDirPath)
+    this.depState = new DepState(this.repoDirPath)
     this.cover = options.cover
   }
 
   getFileDep () {
     return new Promise((resolve, reject) => {
       try {
-        const entryFilePath = getAbsolutePath(this.cloneRepoDirPath, this.entry)
+        const entryFilePath = getAbsolutePath(this.repoDirPath, this.entry)
         const ast = getCodeAst(entryFilePath)
         const fileDesc = getFileDesc(ast, entryFilePath)
         this.depState.addDep(entryFilePath, fileDesc)
         this.getDep(ast, entryFilePath)
         setTimeout(() => {
           // 延时5s等待所有依赖文件扫描完毕再resolve
-          resolve({
-            fileDepData: this.depState.state,
-            error: this.depState.error
-          })
+          resolve(this.depState.state)
         }, 5000)
         console.log('正在扫描文件,请稍等...')
       } catch (error) {
@@ -114,17 +113,11 @@ class FileDepAnalyse {
         this.depState.addDep(filePath, fileDesc, curFilePath)
       })
       .catch(() => {
-        this.depState.addError({
+        errorLog({
           curFilePath,
           depFilePath,
           pathHead,
           msg: '路径解析错误'
-        })
-        this.cover.delTmpDir()
-        // 有路径解析错误直接退出进程
-        process.send({
-          status: 'error',
-          data: this.depState.error
         })
       })
   }
@@ -132,7 +125,11 @@ class FileDepAnalyse {
   transformAlias (alias) {
     const aliasTmp = {}
     for (const [key, value] of Object.entries(alias)) {
-      aliasTmp[key] = path.join(this.cloneRepoDirPath, value)
+      if (path.isAbsolute(value)) {
+        aliasTmp[key] = value
+      } else {
+        aliasTmp[key] = path.join(this.repoDirPath, value)
+      }
     }
     return aliasTmp
   }

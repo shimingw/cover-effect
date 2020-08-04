@@ -1,5 +1,4 @@
 const path = require('path')
-const fs = require('fs')
 
 const exts = ['.js', '.vue', '.jsx', '.json', '.svg', '.png', '.jpg']
 // 补充package中依赖库的数据，依赖数据解析时，需要跳过依赖库的解析
@@ -13,6 +12,7 @@ function loadConfig () {
     ...pkg.dependencies,
     ...pkg.devDependencies
   }
+  // TODO: 判断是否存在.cover.js并给出提示
   const config = require(coverPath)
   config.base = path.dirname(coverPath)
   config.exts = config.exts ? config.exts : exts
