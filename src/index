@@ -1,0 +1,6 @@
+(function () {
+  const getConfig = require('./utils/getConfig')()
+  const Cover = require('./cover')
+  const coverInstant = new Cover(getConfig)
+  coverInstant.getEffectScopeData()
+})()

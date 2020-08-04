@@ -1,16 +1,28 @@
 {
-  "name": "sncover",
-  "version": "1.2.0",
+  "name": "cover-effect",
+  "version": "0.0.1-beta.1",
   "description": "代码影响范围评估工具",
   "main": "./src/cover.js",
   "scripts": {
     "dev": "nodemon --watch ./src ./example/gitReporTmpDir/index.js",
     "dev-node": "nodemon --watch ./src ./example/gitReporTmpDir/node.js"
   },
+  "bin": {
+    "cover": "./src/index"
+  },
   "author": "shimingwen",
   "license": "ISC",
   "devDependencies": {
     "body-parser": "^1.19.0",
+    "chalk": "^4.1.0",
+    "commitizen": "^4.1.2",
+    "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^7.6.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "express": "^4.17.1",
     "nodemon": "^2.0.4"
   },
@@ -23,5 +35,10 @@
     "simple-git": "^2.6.0",
     "util-promisify": "^2.1.0",
     "vue-template-compiler": "^2.6.11"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

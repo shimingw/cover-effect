@@ -3,7 +3,7 @@ const path = require('path')
 const promisify = require('util-promisify')
 const stat = promisify(fs.stat)
 
-function getAbsolutePath(curPath, relativePath) {
+function getAbsolutePath (curPath, relativePath) {
   if (path.isAbsolute(relativePath)) {
     return path.normalize(relativePath)
   } else {
@@ -16,7 +16,7 @@ function getAbsolutePath(curPath, relativePath) {
  * @param {*} relativePath 被依赖文件（import）文件的路径
  * @returns
  */
-async function importPathTransform(curPath, relativePath, alias) {
+async function importPathTransform (curPath, relativePath, alias) {
   // TODO:这里要进行文件后缀名匹配
   // 解析命名别名
   relativePath = replaceAlias(relativePath, alias)
@@ -28,7 +28,7 @@ async function importPathTransform(curPath, relativePath, alias) {
   return await getVaildPath(absolutePath)
 }
 
-function replaceAlias(relativePath, alias) {
+function replaceAlias (relativePath, alias) {
   const pathHead = getPathHead(relativePath)
   const aliasPath = alias[pathHead]
   if (aliasPath === undefined) return relativePath
@@ -36,14 +36,14 @@ function replaceAlias(relativePath, alias) {
   return relativePath
 }
 
-function getPathHead(filePath) {
+function getPathHead (filePath) {
   const indexSlash = filePath.indexOf('/')
   const subDepFilePath =
     indexSlash === -1 ? filePath : filePath.substring(0, indexSlash)
   return subDepFilePath
 }
 
-async function getVaildPath(filePath) {
+async function getVaildPath (filePath) {
   const ext = path.extname(filePath)
   // 第一步：查看路径是否有后缀名，有则直接返回
   if (ext) {
@@ -78,7 +78,7 @@ async function getVaildPath(filePath) {
   //   })
 }
 
-async function matchSuffix(filePath) {
+async function matchSuffix (filePath) {
   const exts = ['.js', '.vue', '.jsx', '.json', '.svg', '.png', '.jpg']
   for (const ext of exts) {
     const guessPath = `${filePath}${ext}`
@@ -87,7 +87,7 @@ async function matchSuffix(filePath) {
   }
 }
 
-function isFile(filePath) {
+function isFile (filePath) {
   return stat(filePath)
     .then((stats) => {
       return stats.isFile() ? filePath : false
@@ -97,7 +97,7 @@ function isFile(filePath) {
     })
 }
 
-function isJsFilePath(filePath) {
+function isJsFilePath (filePath) {
   const ext = path.extname(filePath)
   const exts = ['.js', '.vue', '.jsx']
   return exts.includes(ext)
@@ -107,5 +107,5 @@ module.exports = {
   importPathTransform,
   getAbsolutePath,
   isJsFilePath,
-  getPathHead,
+  getPathHead
 }

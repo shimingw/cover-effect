@@ -46,13 +46,12 @@ export default parser;`
 
 const jsxAst = babylon.parse(jsxCode, {
   sourceType: 'module',
-  plugins:['jsx']
+  plugins: ['jsx']
 })
-
 
 const vueAst = babylon.parse(compiler.parseComponent(vueCode).script.content, {
   sourceType: 'module',
-  plugins:['jsx']
+  plugins: ['jsx']
 })
 // console.log(jsxAst);
-console.log(vueAst);
+console.log(vueAst)

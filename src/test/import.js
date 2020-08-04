@@ -11,9 +11,8 @@ const qweqwe = ()=>import('@views/system/index.jsx')
 
 const jsxAst = babylon.parse(jsxCode, {
   sourceType: 'module',
-  plugins:['jsx']
+  plugins: ['jsx']
 })
-
 
 // const vueAst = babylon.parse(compiler.parseComponent(vueCode).script.content, {
 //   sourceType: 'module',
@@ -21,11 +20,10 @@ const jsxAst = babylon.parse(jsxCode, {
 // })
 // console.log(jsxAst);
 
-
 traverse(jsxAst, {
-    CallExpression({ node }) {
-        if(node.callee.type === 'Import'){
-            console.log(node.arguments[0].value);
-        }
+  CallExpression ({ node }) {
+    if (node.callee.type === 'Import') {
+      console.log(node.arguments[0].value)
     }
-  })
+  }
+})
