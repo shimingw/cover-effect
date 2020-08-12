@@ -41,8 +41,6 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shimingw/cover-effect.git"
-  }
+  "repository": "https://github.com/shimingw/cover-effect.git",
+  "homepage": "https://github.com/shimingw/cover-effect"
 }
