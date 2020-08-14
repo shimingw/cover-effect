@@ -52,7 +52,5 @@ function getFileDesc (ast, filePath) {
 }
 
 module.exports = {
-  getCommentBlock,
-  compileCommentBlock,
   getFileDesc
 }

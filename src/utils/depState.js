@@ -42,7 +42,7 @@ module.exports = class depState {
   initFileDep (filePath, fileDesc) {
     this.state[filePath] = {
       fileDesc: {
-        file: filePath,
+        // file: filePath,
         ...fileDesc
       },
       beDeped: []

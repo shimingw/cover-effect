@@ -6,29 +6,9 @@
     <title>Document</title>
   </head>
   <body>
-    <ul class="cover_content">
-      <% branchDiffDep.forEach(function(dep){ %>
-      <li class="content_line">
-        <h3><%= dep.file %></h3>
-        <p>描述：<span><%= dep.fileDesc.Description %></span></p>
-        <p>最后修改：<span><%= dep.fileDesc.LastEditors %></span></p>
-        <% if (dep.beDeped.length > 0) { %>
-          <div class="scope_area">
-            <span>影响范围：</span>
-            <ul class="cover_content">
-                <% dep.beDeped.forEach(function(beDepedFile){ %>
-                    <li class="content_line">
-                        <p class="relative_file_title"><%= beDepedFile.fileDesc.file %></p>
-                        <p>描述：<span><%= beDepedFile.fileDesc.Description %></span></p>
-                        <p>最后修改：<span><%= beDepedFile.fileDesc.LastEditors %></span></p>
-                    </li>
-                <% }); %>
-            </ul>
-          </div>
-        <% } %>
-      </li>
-      <% }); %>
-    </ul>
+    <script>
+      const branchDiffDep = <%- JSON.stringify(branchDiffDep) %>
+    </script>
   </body>
   <style>
     body {
