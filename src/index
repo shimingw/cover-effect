@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 (function () {
   const getConfig = require('./utils/getConfig')()
   const Cover = require('./cover')
